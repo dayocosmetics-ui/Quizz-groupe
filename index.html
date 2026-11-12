@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz – Les Noms d’Allah</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--tx:#2a2a28;--mu:#7a766e;--ac:#1f6f5c;--acl:#e3f1ec;--ok:#1f7a4d;--okb:#e1f4e9;--ko:#b03a2e;--kob:#fbe7e4;--bd:#e4ded3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16191a;--card:#202526;--tx:#ece9e2;--mu:#9a968c;--ac:#5fc4a8;--acl:#1f3a33;--ok:#6fd49b;--okb:#1c3527;--ko:#ef8a7e;--kob:#3b2220;--bd:#333a3b;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Georgia,"Times New Roman",serif}
+.w{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:4px 0 2px}
+.sub{color:var(--mu);font-size:14px;margin:0 0 16px;font-family:system-ui,sans-serif}
+.bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.cnt{font:13px system-ui,sans-serif;color:var(--mu);margin-bottom:14px;display:flex;justify-content:space-between}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+.tag{display:inline-block;font:12px system-ui,sans-serif;background:var(--acl);color:var(--ac);padding:2px 10px;border-radius:99px;margin-bottom:10px}
+.q{font-size:19px;margin:0 0 14px;line-height:1.4}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.opt:active{transform:scale(.99)}
+.opt.ok{background:var(--okb);border-color:var(--ok)}
+.opt.ko{background:var(--kob);border-color:var(--ko)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--acl);font-size:15px}
+.fb b.g{color:var(--ok)}.fb b.b{color:var(--ko)}
+.ar{direction:rtl;font-size:22px;line-height:1.9;margin:8px 0 2px;font-family:"Amiri","Traditional Arabic",serif}
+.pr{font-size:14px;color:var(--mu);margin-top:6px}
+.btn{font:600 15px system-ui,sans-serif;background:var(--ac);color:var(--bg);border:0;border-radius:10px;padding:12px 18px;cursor:pointer;width:100%;margin-top:14px}
+.row{display:flex;gap:10px}.row .btn{margin-top:10px}
+.btn.s{background:var(--bg);color:var(--tx);border:1.5px solid var(--bd)}
+.big{font-size:44px;text-align:center;margin:6px 0;color:var(--ac)}
+.rev{margin-top:16px;font-size:15px}.rev li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>Les Noms d’Allah</h1>
+<p class="sub">Questionnaire interactif · 20 questions</p>
+<div id="app"></div>
+</div>
+<script>
+const Q=[
+{t:"qcm",q:"Pourquoi Allah nous a-t-Il créés ?",o:["Pour seulement profiter ici-bas","Sans but","Pour L’adorer"],c:2,ar:"",p:"Sourate Adh-Dhâriyât, 51:56 : « Je n’ai créé les djinns et les hommes que pour qu’ils M’adorent. »"},
+{t:"qcm",q:"Comment la connaissance d’Allah donne-t-elle du sens à notre existence ?",o:["Elle nous apprend à Le connaître, à comprendre qui nous a créés et le but de notre existence, à L’aimer et donc à L’adorer de la meilleure des manières","Elle ne donne pas de sens"],c:0},
+{t:"open",q:"Quel est le mérite général de rechercher une science religieuse bénéfique ?",a:"La recherche de la science est une voie vers le Paradis lorsqu’elle est entreprise sincèrement et conformément aux enseignements de l’islam. L’étude des Noms d’Allah fait partie des sciences religieuses les plus importantes.",p:"Sahîh Muslim, 2699 : « Celui qui emprunte un chemin à la recherche d’une science, Allah lui facilite par cela un chemin vers le Paradis. »"},
+{t:"qcm",q:"Quel effet la connaissance d’Allah a-t-elle sur notre cœur ?",o:["Elle n’en a pas","Le tourment","La sérénité"],c:2,p:"Coran, Ar-Ra‘d 13:28 : « N’est-ce point par l’évocation d’Allah que se tranquillisent les cœurs ? »"},
+{t:"qcm",q:"Pourquoi devons-nous apprendre les Noms d’Allah pour L’invoquer ?",o:["Juste à titre d’information","C’est un ordre divin"],c:1,ar:"وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا",p:"Coran, Al-A‘râf 7:180 : « C’est à Allah qu’appartiennent les Noms les plus beaux. Invoquez-Le par ces Noms. »"},
+{t:"qcm",q:"Quel mérite particulier le Prophète ﷺ a-t-il annoncé concernant les Noms d’Allah ?",o:["La richesse","Les bienfaits ici-bas","Une entrée au Paradis"],c:2,ar:"إِنَّ لِلَّهِ تِسْعَةً وَتِسْعِينَ اسْمًا مِائَةً إِلَّا وَاحِدًا مَنْ أَحْصَاهَا دَخَلَ الْجَنَّةَ",p:"Sahîh Al-Bukhârî, 2736 ; Sahîh Muslim, 2677 : « Allah possède quatre-vingt-dix-neuf Noms, cent moins un. Celui qui les dénombre entrera au Paradis. »"},
+{t:"qcm",q:"Doit-on simplement apprendre les Noms sans les méditer ?",o:["Non, nous devons les méditer pour comprendre et les appliquer au quotidien","Oui"],c:0,p:"Coran, Sâd 38:29 : « Un Livre béni que Nous avons fait descendre vers toi, afin qu’ils méditent sur ses versets et que les doués d’intelligence réfléchissent. » La mémorisation est précieuse, mais elle doit s’accompagner de compréhension et de méditation."},
+{t:"open",q:"Quel est finalement le véritable objectif de l’apprentissage des Noms d’Allah ?",a:"Apprendre à connaître Allah pour mieux L’adorer, L’aimer, Le craindre, espérer Sa miséricorde et rechercher Son agrément.",ar:"قُلْ إِنَّ صَلَاتِي وَنُسُكِي وَمَحْيَايَ وَمَمَاتِي لِلَّهِ رَبِّ الْعَالَمِينَ",p:"Coran, Al-An‘âm 6:162 : « Dis : En vérité, ma prière, mes actes de dévotion, ma vie et ma mort appartiennent à Allah, Seigneur de l’univers. »"},
+{t:"qcm",q:"Quelles sont les deux grandes significations du Nom Al-Latîf ?",o:["La sagesse et le pardon","La subtilité et la douceur","La miséricorde et l’éducateur"],c:1,ar:"اللَّطِيفُ",p:"Al-Latîf : Le Subtil, le Doux, Celui dont la bonté atteint Ses serviteurs par des voies imperceptibles."},
+{t:"qcm",q:"Comment reconnaître la subtilité d’Allah dans notre quotidien ?",o:["En développant notre gratitude, en méditant sur les signes et les bienfaits reçus, et en reconnaissant qu’Allah connaît nos besoins, même ceux dont nous n’avons pas pleinement conscience","En se plaignant de ce que nous n’avons pas"],c:0},
+{t:"open",q:"Quelle leçon pouvons-nous tirer du Nom Al-Latîf dans notre comportement envers les autres ?",a:"Faire preuve de douceur, de délicatesse et de bienveillance, notamment dans notre manière de conseiller, de parler et d’accompagner les autres.",p:"Sahîh Muslim, 2593 : le Prophète ﷺ a enseigné qu’Allah est doux et aime la douceur."},
+{t:"qcm",q:"Que signifie le Nom Ash-Shakûr lorsqu’il est attribué à Allah ?",o:["Le Clairvoyant","Celui qui reconnaît et récompense abondamment","Celui qui entend tout"],c:1,ar:"الشَّكُورُ",p:"Ash-Shakûr : Celui qui reconnaît et récompense abondamment."},
+{t:"open",q:"Comment Allah peut-Il être Ash-Shakûr alors qu’Il n’a absolument aucun besoin de nos bonnes actions ?",a:"La reconnaissance d’Allah n’est pas semblable à celle des créatures. Il n’est pas redevable envers nous. Par Sa générosité, Il accepte les œuvres sincères et les récompense, alors que nous sommes entièrement dépendants de Lui.",ar:"يَا أَيُّهَا النَّاسُ أَنتُمُ الْفُقَرَاءُ إِلَى اللَّهِ وَاللَّهُ هُوَ الْغَنِيُّ الْحَمِيدُ",p:"Sourate Fâtir, 35:15 : « Ô hommes, vous êtes les indigents ayant besoin d’Allah, et c’est Allah, Lui, qui se dispense de tout et qui est Le Digne de louange. »"},
+{t:"qcm",q:"Par quel biais entrons-nous au Paradis ?",o:["Par nos œuvres","Par la Miséricorde d’Allah","Par notre bon comportement avec les autres"],c:1,ar:"لَنْ يُدْخِلَ أَحَدًا عَمَلُهُ الْجَنَّةَ ... إِلَّا أَنْ يَتَغَمَّدَنِيَ اللَّهُ بِرَحْمَةٍ مِنْهُ وَفَضْلٍ",p:"Sahîh Al-Bukhârî, 5673 ; Sahîh Muslim, 2816 : « Nul n’entrera au Paradis par ses seules œuvres. » On lui dit : « Pas même toi, ô Messager d’Allah ? » Il répondit : « Pas même moi, à moins qu’Allah ne m’enveloppe de Sa miséricorde et de Sa grâce. »"},
+{t:"open",q:"Comment vivre avec le Nom Ash-Shakûr dans nos relations avec les autres ?",a:"En apprenant à reconnaître les efforts des autres, à remercier ceux qui nous font du bien et à ne pas minimiser les petits efforts.",p:"Sunan Abî Dâwûd, 4811 ; Jâmi‘ At-Tirmidhî, 1954 : le Prophète ﷺ a enseigné que celui qui ne remercie pas les gens ne remercie pas Allah."},
+{t:"qcm",q:"Que signifie le Nom Al-Wakîl ?",o:["L’Omniscient","L’Omnipotent","Le Garant"],c:2,ar:"الْوَكِيلُ",p:"Al-Wakîl : Le Garant, Celui à qui on confie ses affaires et qui suffit à celui qui place sa confiance en Lui."},
+{t:"qcm",q:"Quelle invocation prononcée par Ibrahim fait référence au Nom Al-Wakîl ?",o:["Hasbunallâhu wa ni‘ma-l-Wakîl. « Allah nous suffit, et quel excellent Garant ! »","Lâ hawla wa lâ quwwata illâ billâh","Alhamdulillâh"],c:0},
+{t:"qcm",q:"Quelles sont les deux notions du tawakkul ?",o:["Placer sa confiance en Allah et attendre","Faire toutes les causes, licites et illicites, car notre avenir ne dépend que de nous","Placer sa confiance et faire les causes, en ayant conscience que tout dépend de Lui"],c:2},
+{t:"open",q:"Pourquoi ne devons-nous pas placer notre confiance absolue dans les créatures ?",a:"Parce que les créatures sont limitées, dépendantes d’Allah et incapables de garantir tous les résultats. Nous pouvons solliciter leur aide, mais notre confiance ultime doit être placée en Allah.",ar:"وَتَوَكَّلْ عَلَى اللَّهِ وَكَفَىٰ بِاللَّهِ وَكِيلًا",p:"Sourate Al-Ahzâb, 33:3 : « Et place ta confiance en Allah. Allah suffit comme Garant. »"},
+{t:"open",q:"À quel pilier fondamental de la foi le tawakkul est-il étroitement lié ?",a:"Le sixième pilier de la foi (Al-Îmân), qui consiste à croire au destin (Al-Qadar), qu’il soit bon ou mauvais."}
+];
+let i=0,score=0,missed=[];
+const $=document.getElementById("app");
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function head(){return `<div class="bar"><i style="width:${i/Q.length*100}%"></i></div><div class="cnt"><span>Question ${i+1} / ${Q.length}</span><span>Score : ${score}</span></div>`}
+function proof(x){return (x.ar?`<div class="ar">${x.ar}</div>`:"")+(x.p?`<div class="pr">${esc(x.p)}</div>`:"")}
+function show(){
+ if(i>=Q.length)return end();
+ const x=Q[i];
+ let h=head()+`<div class="card"><span class="tag">${x.t==="qcm"?"Choix multiple":"Question ouverte"}</span><p class="q">${esc(x.q)}</p><div id="b">`;
+ if(x.t==="qcm")h+=x.o.map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join("");
+ else h+=`<button class="btn" id="rv">Voir la réponse</button>`;
+ h+=`</div><div id="f"></div></div>`;
+ $.innerHTML=h;
+ if(x.t==="qcm")document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+ else document.getElementById("rv").onclick=reveal;
+ window.scrollTo(0,0);
+}
+function next(){return `<button class="btn" id="nx">${i===Q.length-1?"Voir mon résultat":"Question suivante"}</button>`}
+function bindNext(){document.getElementById("nx").onclick=()=>{i++;show()}}
+function pick(k){
+ const x=Q[i],ok=k===x.c;
+ if(ok)score++;else missed.push(i);
+ document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===x.c)b.classList.add("ok");else if(j===k)b.classList.add("ko")});
+ document.getElementById("f").innerHTML=`<div class="fb"><b class="${ok?"g":"b"}">${ok?"Bonne réponse !":"Pas tout à fait."}</b>${proof(x)}</div>`+next();
+ bindNext();
+}
+function reveal(){
+ const x=Q[i];
+ document.getElementById("b").innerHTML="";
+ document.getElementById("f").innerHTML=`<div class="fb"><b>Réponse :</b> ${esc(x.a)}${proof(x)}</div><p class="sub" style="margin:12px 0 0">Avais-tu la bonne réponse ?</p><div class="row"><button class="btn" id="y">Oui</button><button class="btn s" id="n">À revoir</button></div>`;
+ document.getElementById("y").onclick=()=>{score++;i++;show()};
+ document.getElementById("n").onclick=()=>{missed.push(i);i++;show()};
+}
+function end(){
+ const p=Math.round(score/Q.length*100);
+ let m=p>=90?"Excellent, ما شاء الله !":p>=70?"Très bien, continue ainsi.":p>=50?"Bon début, une relecture t’aidera.":"Courage, reprends tranquillement les Noms un par un.";
+ $.innerHTML=`<div class="bar"><i style="width:100%"></i></div><div class="card"><div class="big">${score} / ${Q.length}</div><p style="text-align:center;margin:0">${m}</p>${missed.length?`<div class="rev"><b>À revoir :</b><ul>${missed.map(k=>`<li>${esc(Q[k].q)}</li>`).join("")}</ul></div>`:""}<button class="btn" id="rs">Recommencer</button></div>`;
+ document.getElementById("rs").onclick=()=>{i=0;score=0;missed=[];show()};
+}
+function gate(){
+ $.innerHTML=`<div class="card"><span class="tag">Accès protégé</span><p class="q">Entre le code pour commencer le quiz.</p><input id="cd" type="password" autocomplete="off" placeholder="Code" style="width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)"><div id="er" class="pr" style="color:var(--ko);min-height:20px"></div><button class="btn" id="go">Commencer</button></div>`;
+ const t=()=>{if(document.getElementById("cd").value.trim().toLowerCase()==="groupes")show();else document.getElementById("er").textContent="Code incorrect, réessaie."};
+ document.getElementById("go").onclick=t;
+ document.getElementById("cd").onkeydown=e=>{if(e.key==="Enter")t()};
+}
+show();
+</script>
+</body>
+</html>
